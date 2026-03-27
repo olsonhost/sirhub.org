@@ -20,5 +20,5 @@ SirHub gives those projects a proper Git home: a place to store source repositor
 
 *   `index.html`: The main landing page.
 *   `FRONTPAGE.md`: The original specification and copy for the landing page.
-*   `illusion.html`: A color afterimage illusion demo featuring Syndorela assets.
+*   `illusion.html`: A color afterimage illusion demo for no apparent reason.
 *   `syndorela-lifelike.png` / `syndorela-toon.png`: Assets used in the illusion demo.
