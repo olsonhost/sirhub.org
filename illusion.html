@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Afterimage Illusion</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        
+        :root {
+            --bg: #111;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Inter', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        header {
+            text-align: center;
+            padding: 2rem 1rem 1rem;
+            max-width: 800px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem;
+            background: linear-gradient(90deg, #ff00cc, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        
+        .upload-btn {
+            background: #00ffff;
+            color: #111;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00ffff;
+        }
+        
+        .demo-btn {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #ff00cc;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .demo-btn:hover {
+            background: #ff00cc;
+            color: #111;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+            max-width: 1200px;
+            width: 100%;
+            padding: 0 1rem;
+        }
+        
+        .panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        
+        .panel-header {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .inverted-header { color: #ff00cc; }
+        .grayscale-header { color: #00ffff; }
+        
+        .image-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #222;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: filter 0.3s ease;
+        }
+        
+        .inverted img {
+            filter: invert(100%) !important;
+        }
+        
+        .grayscale img {
+            filter: grayscale(100%) !important;
+        }
+        
+        .instructions {
+            margin-top: 2rem;
+            max-width: 800px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,0,204,0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            box-shadow: 0 0 30px rgba(255,0,204,0.6);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .start-btn {
+            background: #ff00cc;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 0 25px #ff00cc;
+            transition: all 0.3s;
+        }
+        
+        .start-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        footer {
+            margin-top: auto;
+            padding: 2rem;
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Negative Afterimage Illusion</h1>
+        <p class="subtitle">Stare at the inverted image → then watch the black &amp; white one come alive in color</p>
+    </header>
+
+    <div class="controls">
+        <label class="upload-btn">
+            📤 Upload your own photo
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+        </label>
+        
+        <button class="demo-btn" id="loadDemo">
+            🎨 Load sample image
+        </button>
+        
+        <button class="start-btn" id="startTimer">
+            ⏳ Start 10-second stare
+        </button>
+    </div>
+
+    <div class="main-content">
+        <!-- Inverted panel -->
+        <div class="panel inverted">
+            <div class="panel-header inverted-header">
+                <span>🌈</span> INVERTED COLORS (stare here)
+            </div>
+            <div class="image-container" id="invertedContainer">
+                <img id="invertedImg" src="syndorela-lifelike.png" alt="Inverted image">
+            </div>
+            <p style="margin-top: 12px; color: #ff00cc; font-size: 0.95rem;">Negative version – stare at the center for 10 seconds</p>
+        </div>
+
+        <!-- Grayscale panel -->
+        <div class="panel grayscale">
+            <div class="panel-header grayscale-header">
+                <span>⚪</span> BLACK &amp; WHITE
+            </div>
+            <div class="image-container" id="grayscaleContainer">
+                <img id="grayscaleImg" src="syndorela-lifelike.png" alt="Grayscale image">
+            </div>
+            <p style="margin-top: 12px; color: #00ffff; font-size: 0.95rem;">Look here after 10 seconds – colors should appear!</p>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <strong>How it works:</strong><br>
+        1. Stare at the <span style="color:#ff00cc">inverted (negative) image</span> for exactly 10 seconds without moving your eyes.<br>
+        2. Quickly shift your gaze to the <span style="color:#00ffff">black &amp; white image</span> on the right.<br>
+        3. Your eyes will “fill in” the missing colors due to the negative afterimage effect. The longer you stared, the stronger the illusion!<br><br>
+        <strong>Pro tip:</strong> Works best in a dark room. Try different photos – vibrant colors give the coolest results!
+    </div>
+
+    <div class="timer" id="timerDisplay">
+        <span id="countdown">10</span> seconds remaining
+    </div>
+
+    <footer>
+        Made with CSS filters + JavaScript • Works in every modern browser
+    </footer>
+
+    <script>
+
+        var $image1 = 'syndorela-lifelike.png';
+        var $image2 = 'syndorela-toon.png';
+        var $image = $image1;
+        const invertedImg = document.getElementById('invertedImg');
+        const grayscaleImg = document.getElementById('grayscaleImg');
+        const uploadInput = document.getElementById('imageUpload');
+        const loadDemoBtn = document.getElementById('loadDemo');
+        const startTimerBtn = document.getElementById('startTimer');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const countdownEl = document.getElementById('countdown');
+
+        // Default sample image (vibrant landscape – great for the illusion)
+        let currentSrc = 'https://picsum.photos/id/1015/800/600';
+
+        // Function to update both images
+        function updateImages(src) {
+            currentSrc = src;
+            invertedImg.src = src;
+            grayscaleImg.src = src;
+            
+            // Force filter refresh
+            invertedImg.style.filter = 'invert(100%)';
+            grayscaleImg.style.filter = 'grayscale(100%)';
+        }
+
+        // Handle file upload
+        uploadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                updateImages(event.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Load demo image
+        loadDemoBtn.addEventListener('click', function() {
+            // You can change this URL to any public image you like
+	    $image = ($image == $image1) ? $image2 : $image1;
+            updateImages($image);
+            // Optional: another great one for the illusion
+            // updateImages('https://picsum.photos/id/1016/800/600');
+        });
+
+        // 10-second timer
+        let timerInterval = null;
+        
+        startTimerBtn.addEventListener('click', function() {
+            if (timerInterval) return; // prevent spamming
+            
+            let timeLeft = 10;
+            countdownEl.textContent = timeLeft;
+            timerDisplay.style.display = 'flex';
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                countdownEl.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    timerDisplay.style.display = 'none';
+                    
+                    // Visual flash to remind user to switch gaze
+                    const flash = document.createElement('div');
+                    flash.style.position = 'fixed';
+                    flash.style.top = '0';
+                    flash.style.left = '0';
+                    flash.style.width = '100%';
+                    flash.style.height = '100%';
+                    flash.style.background = 'white';
+                    flash.style.opacity = '0.3';
+                    flash.style.pointerEvents = 'none';
+                    flash.style.transition = 'opacity 0.6s';
+                    document.body.appendChild(flash);
+                    
+                    setTimeout(() => {
+                        flash.style.opacity = '0';
+                        setTimeout(() => flash.remove(), 600);
+                    }, 50);
+                }
+            }, 1000);
+        });
+
+        // Keyboard shortcut: press "T" to start timer
+        document.addEventListener('keydown', function(e) {
+            if (e.key.toLowerCase() === 't') {
+                startTimerBtn.click();
+            }
+        });
+
+        // Make sure images load with correct filters on page load
+        window.onload = function() {
+            invertedImg.style.filter = 'invert(100%)';
+            grayscaleImg.style.filter = 'grayscale(100%)';
+        };
+    </script>
+</body>
+</html>
